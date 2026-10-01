@@ -415,6 +415,15 @@ main{padding-top:35px;padding-bottom:84px}
 @media(min-width:761px){.preview-login{display:none;align-items:flex-start;padding:8px 0}.preview-locked .preview-login{display:flex}.login-scene{min-height:0;border-radius:clamp(40px,10vw,77px);box-shadow:none}.login-sky{height:100cqw}.login-brand{top:4cqw;left:7cqw;font-size:5.5cqw}.login-brand-mark{width:16cqw;height:16cqw}.login-brand small{font-size:4.1cqw}.login-slogan{top:7cqw;right:7cqw;left:auto;width:39cqw;font-size:4.7cqw}.login-hero-illustration{right:7cqw;bottom:-10cqw;width:82cqw;height:91cqw}.login-sheet{margin:-1cqw 4.4cqw 0;padding:4.7cqw 4.5cqw 4.5cqw}.login-sheet h1{font-size:8cqw}}
 @media(max-width:380px){.login-sky{height:100cqw}.login-slogan{font-size:4.7cqw}.login-hero-illustration{right:7cqw;bottom:-10cqw;height:91cqw}.login-sheet{margin:-1cqw 4.4cqw 0;padding:4.7cqw 4.5cqw}.login-sheet h1{font-size:8cqw}}
 
+
+/* On an actual phone the login is the screen, not a phone mockup. */
+@media(max-width:760px){
+  html,body.preview-locked{background:#0759d4}
+  .preview-locked .demo-ribbon{display:none}
+  .preview-login{min-height:100svh;min-height:100dvh;padding:0;background:#0759d4}
+  .preview-locked .preview-login{display:block}
+  .login-scene{width:100%;max-width:none;min-height:100svh;min-height:100dvh;aspect-ratio:auto;margin:0;border:0;border-radius:0;box-shadow:none}
+}
 </style>
 </head>
 <body>
