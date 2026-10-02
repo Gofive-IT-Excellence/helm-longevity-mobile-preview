@@ -442,6 +442,29 @@ main{padding-top:35px;padding-bottom:84px}
 .water-reminder-alert strong{display:block;color:#075fc7;font-size:16px}.water-reminder-alert p{margin:5px 0 12px;color:#607c9e;font-size:13px}
 .water-reminder-alert-actions{display:flex;gap:8px}.water-reminder-alert-actions button{flex:1;min-height:39px;border:1px solid #bbdaf5;border-radius:10px;background:#fff;color:#075fc7;font-weight:700}.water-reminder-alert-actions button:first-child{border-color:#075fc7;background:#075fc7;color:#fff}
 .preview-locked #water-reminder-root{display:none}
+
+/* HELM trainer: an empty chat screen with the same mobile navigation. */
+@media(max-width:760px){.bottom-nav{grid-template-columns:repeat(6,minmax(0,1fr))}.bottom-nav button{font-size:9px;gap:2px}.bottom-nav button svg{width:20px;height:20px}.bottom-nav button span{letter-spacing:-.02em}}
+@media(max-width:360px){.bottom-nav button{font-size:8px}}
+.trainer-page{max-width:720px;margin:0 auto;min-height:calc(100dvh - 260px);display:flex;flex-direction:column}
+.trainer-heading{display:flex;align-items:center;gap:12px;margin:5px 0 12px}
+.trainer-heading-mark{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:16px;color:#0872e3;background:#e4f5ff}
+.trainer-heading-mark svg{width:27px;height:27px}
+.trainer-heading h1{margin:0;color:#123d76;font-size:24px;line-height:1.2;font-weight:400}
+.trainer-heading p{margin:1px 0 0;color:#6984a8;font-size:13px}
+.trainer-status{margin-left:auto;flex:none;padding:6px 9px;border:1px solid #d4e6fa;border-radius:999px;color:#6783a5;background:#f8fbff;font-size:10px}
+.trainer-chat{min-height:260px;flex:1;display:flex;flex-direction:column;gap:12px;padding:16px 0 18px}
+.trainer-message{max-width:88%;margin:0;padding:11px 14px;border-radius:17px;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.trainer-message.user{align-self:flex-end;border-bottom-right-radius:5px;color:#fff;background:#086fe2}
+.trainer-message.system{align-self:flex-start;border:1px solid #dce9f9;border-bottom-left-radius:5px;color:#5d779a;background:#fff}
+.trainer-compose{position:sticky;bottom:76px;display:flex;align-items:center;gap:9px;width:100%;padding:8px;border:1px solid #d8e7f9;border-radius:19px;background:#fff;box-shadow:0 8px 25px #0b5dad12}
+.trainer-compose input{flex:1;min-width:0;padding:9px 8px;border:0;outline:0;background:transparent;color:#173d70;font:inherit;font-size:14px}
+.trainer-compose input::placeholder{color:#91a5bf}
+.trainer-compose:focus-within{border-color:#5cb7f4;box-shadow:0 0 0 3px #4caeff21}
+.trainer-compose button{width:40px;height:40px;flex:none;display:grid;place-items:center;border:0;border-radius:13px;background:#0779e9;color:#fff;font:inherit;font-size:20px;cursor:pointer}
+.trainer-compose button:disabled{background:#c7d8ed;cursor:default}
+.trainer-note{margin:8px 2px 0;color:#8299b4;font-size:11px;line-height:1.4;text-align:center}
+@media(min-width:761px){.trainer-page{min-height:calc(100dvh - 210px)}.trainer-compose{bottom:20px}}
 </style>
 </head>
 <body>
@@ -468,7 +491,7 @@ const icon=(n,cls="")=>(ICONS[n]||"").replace("<svg ","<svg class=\""+cls+"\" ")
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const picture=()=>state.photo||MEAL;
 function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{}}
-function navHTML(){return [["today","home","วันนี้"],["food","food","อาหาร"],["wheel","wheel","กินอะไรดี"],["activity","run","กิจกรรม"],["profile","user","ฉัน"]].map(([key,ic,label])=>`<button type="button" data-action="nav" data-tab="${key}" class="${state.tab===key?"active":""}" aria-current="${state.tab===key?"page":"false"}">${icon(ic)}<span>${label}</span></button>`).join("")}
+function navHTML(){return [["today","home","วันนี้"],["food","food","อาหาร"],["wheel","wheel","กินอะไรดี"],["activity","run","กิจกรรม"],["trainer","barbell","เทรนเนอร์"],["profile","user","ฉัน"]].map(([key,ic,label])=>`<button type="button" data-action="nav" data-tab="${key}" class="${state.tab===key?"active":""}" aria-current="${state.tab===key?"page":"false"}">${icon(ic)}<span>${label}</span></button>`).join("")}
 function header(title,sub){return `<div class="page-intro"><p class="eyebrow">HELM LONGEVITY</p><h1>${title}</h1><p>${sub}</p></div>`}
 function home(){return `
   ${header("สุขภาพวันนี้","ดูแลตัวเองได้ง่าย ๆ ในทุกกะงาน")}
@@ -482,7 +505,7 @@ function food(){return `<div class="subpage">${header("อาหารของ�
 function activity(){return `<div class="subpage">${header("แผนกิจกรรม","ขยับตัวให้เข้ากับตารางกะของคุณ")}<div class="activity-choice"><span class="round-icon">${icon("run")}</span><p class="eyebrow">แนะนำสำหรับวันนี้</p><h2>${esc(state.activity)} ${esc(state.duration)} นาที</h2><p>${esc(state.when)} • ปรับกิจกรรมให้ตรงกับเวลาที่สะดวกได้</p><div class="activity-actions"><button class="solid-button" data-action="done">${icon(state.activityDone?"check":"clock")} ${state.activityDone?"ทำสำเร็จแล้ว":"บันทึกว่าทำแล้ว"}</button><button class="ghost-button" data-action="activity-plan">เปลี่ยนกิจกรรม</button></div></div><p class="estimate">แผนนี้เป็นตัวอย่างสำหรับต้นแบบ สามารถปรับตามความพร้อมของแต่ละคน</p></div>`}
 function profile(){return `<div class="subpage">${header("ข้อมูลของฉัน","เป้าหมายและความเป็นส่วนตัว")}<div class="profile-row"><span>ตารางกะ</span><strong>กะเช้า 08:00–17:00</strong></div><div class="profile-row"><span>เป้าหมาย</span><strong>ดูแลสุขภาพระยะยาว</strong></div><div class="profile-row"><span>AI ของบริษัท</span><strong>รอเชื่อม HELM</strong></div><div class="profile-row"><span>การจัดเก็บ</span><strong>ในเบราว์เซอร์เครื่องนี้</strong></div><p class="estimate">ข้อมูลในไฟล์นี้เก็บเฉพาะบนเครื่องของคุณ ไม่มีการส่งไปยังเซิร์ฟเวอร์</p></div>`}
 function review(){return `<div class="subpage">${header("ตรวจผลก่อนบันทึก","แก้ชื่ออาหาร ปริมาณ และสารอาหารได้")}<p class="notice">ผลตัวอย่างสำหรับต้นแบบ • ยังไม่ได้เชื่อมต่อ HELM AI</p><div class="review-grid"><img src="${picture()}" alt="รูปอาหารที่เลือก"><form id="review-form" class="review-form"><label class="field full">ชื่ออาหาร<input name="name" value="${esc(state.name)}" required></label><label class="field full">ปริมาณ<input name="portion" value="${esc(state.portion)}" required></label><label class="field">พลังงาน (kcal)<input name="kcal" type="number" min="0" value="${esc(state.kcal)}" required></label><label class="field">โปรตีน (กรัม)<input name="protein" type="number" min="0" value="${esc(state.protein)}" required></label><label class="field">คาร์โบไฮเดรต (กรัม)<input name="carbs" type="number" min="0" value="${esc(state.carbs)}" required></label><label class="field">ไขมัน (กรัม)<input name="fat" type="number" min="0" value="${esc(state.fat)}" required></label><button class="solid-button" type="submit">${icon("check")} บันทึกมื้ออาหาร</button></form></div></div>`}
-function render(){const showingReview=state.tab==="review";$("#main").innerHTML=showingReview?review():({today:home,food,wheel:wheelPage,activity,profile}[state.tab]||home)();$("#side-nav").innerHTML=navHTML();$("#bottom-nav").innerHTML=navHTML();document.querySelectorAll("[data-icon]").forEach(e=>e.innerHTML=icon(e.dataset.icon));hydrateMascots();document.title="HELM Longevity";window.scrollTo(0,0)}
+function render(){const showingReview=state.tab==="review";$("#main").innerHTML=showingReview?review():({today:home,food,wheel:wheelPage,activity,trainer:trainerPage,profile}[state.tab]||home)();$("#side-nav").innerHTML=navHTML();$("#bottom-nav").innerHTML=navHTML();document.querySelectorAll("[data-icon]").forEach(e=>e.innerHTML=icon(e.dataset.icon));hydrateMascots();document.title="HELM Longevity";window.scrollTo(0,0)}
 function modal(title,sub,body){$("#modal-root").innerHTML=`<div class="modal" role="dialog" aria-modal="true" aria-label="${title}"><div class="modal-header"><div><h2>${title}</h2><p>${sub}</p></div><button class="icon-button" data-action="close" aria-label="ปิด">${icon("close")}</button></div>${body}</div>`}
 function closeModal(){$("#modal-root").innerHTML=""}
 function toast(message){$("#toast-root").innerHTML=`<div class="toast" role="status">${message}</div>`;setTimeout(()=>$("#toast-root").innerHTML="",2600)}
@@ -689,6 +712,14 @@ document.body.classList.add('preview-locked');
 const priorRender=render;
 render=function(){priorRender();if(document.body.classList.contains('preview-locked'))document.title='เข้าสู่ระบบ • HELM Longevity'};
 document.addEventListener('click',e=>{const button=e.target.closest('[data-action]');if(!button)return;if(button.dataset.action==='preview-enter'){if(new URLSearchParams(location.search).has('login'))history.replaceState(null,'',location.pathname);document.body.classList.remove('preview-locked');state.tab='today';persist();render()}else if(button.dataset.action==='preview-exit'){document.body.classList.add('preview-locked');document.title='เข้าสู่ระบบ • HELM Longevity';window.scrollTo(0,0)}});
+
+
+/* The trainer chat is a shell. It does not send text to HELM until a backend is connected. */
+ICONS.barbell='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"><path d="M248,120h-8V88a16,16,0,0,0-16-16H208V64a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16v56H104V64A16,16,0,0,0,88,48H64A16,16,0,0,0,48,64v8H32A16,16,0,0,0,16,88v32H8a8,8,0,0,0,0,16h8v32a16,16,0,0,0,16,16H48v8a16,16,0,0,0,16,16H88a16,16,0,0,0,16-16V136h48v56a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16v-8h16a16,16,0,0,0,16-16V136h8a8,8,0,0,0,0-16ZM32,168V88H48v80Zm56,24H64V64H88V192Zm104,0H168V64h24V175.82c0,.06,0,.12,0,.18s0,.12,0,.18V192Zm32-24H208V88h16Z"></path></svg>';
+ICONS.send='<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"><path d="M227.32,28.68a16,16,0,0,0-16.41-3.93L32.41,92.86a16,16,0,0,0,.8,30.14l74.89,25,25,74.89a16,16,0,0,0,15,10.95h.4a16,16,0,0,0,14.74-10.55l68.11-178.5A16,16,0,0,0,227.32,28.68ZM148.5,207.27l-21.07-63.2,44.37-44.37a8,8,0,0,0-11.32-11.32l-44.37,44.37-63.2-21.07L216,49.53Z"></path></svg>';
+let trainerMessages=[];
+function trainerPage(){return `<div class="trainer-page" aria-label="แชต AI เทรนเนอร์"><div class="trainer-heading"><span class="trainer-heading-mark">${icon("barbell")}</span><div><h1>AI เทรนเนอร์</h1><p>คุยเรื่องการออกกำลังกายกับ HELM</p></div><span class="trainer-status">พรีวิว</span></div><div id="trainer-chat" class="trainer-chat" role="log" aria-live="polite">${trainerMessages.map(m=>`<p class="trainer-message ${m.role}">${esc(m.text)}</p>`).join("")}</div><form id="trainer-form" class="trainer-compose"><input name="message" type="text" maxlength="500" autocomplete="off" aria-label="พิมพ์คำถามถึง AI เทรนเนอร์" placeholder="ถามเรื่องการออกกำลังกาย…" required><button type="submit" aria-label="ส่งข้อความ">${icon("send")}</button></form><p class="trainer-note">ตัวอย่างหน้าแชต • ยังไม่เชื่อม HELM AI</p></div>`}
+document.addEventListener('submit',e=>{if(e.target.id!=='trainer-form')return;e.preventDefault();const input=e.target.elements.message;const message=input.value.trim();if(!message)return;trainerMessages.push({role:'user',text:message});if(!trainerMessages.some(m=>m.role==='system'))trainerMessages.push({role:'system',text:'ตอนนี้ยังไม่เชื่อม HELM AI จึงยังตอบคำถามไม่ได้'});render();document.querySelector('#trainer-chat')?.scrollIntoView({block:'end'});document.querySelector('#trainer-form input')?.focus()});
 
 render();
 </script>
